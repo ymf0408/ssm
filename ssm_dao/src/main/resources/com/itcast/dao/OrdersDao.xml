@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itcast.dao.OrdersDao">
+
+    <resultMap id="findOrders" type="orders">
+        <id property="id" column="id"/>
+        <result property="orderNum" column="orderNum"/>
+        <result property="orderTime" column="orderTime"/>
+        <result property="peopleCount" column="peopleCount"/>
+        <result property="orderDesc" column="orderDesc"/>
+        <result property="orderStatus" column="orderStatus"/>
+        <result property="payType" column="payType"/>
+        <association property="product" javaType="com.itcast.domain.Product">
+            <result property="productNum" column="productNum"/>
+            <result property="productName" column="productName"/>
+            <result property="cityName" column="cityName"/>
+            <result property="departureTime" column="departureTime"/>
+            <result property="productPrice" column="productPrice"/>
+            <result property="productDesc" column="productDesc"/>
+            <result property="productStatus" column="productStatus"/>
+        </association>
+    </resultMap>
+
+
+    <select id="findAll" resultMap="findOrders">
+        select o.id,o.ordernum,o.ordertime,o.peoplecount,o.orderdesc,o.paytype,o.orderstatus,o.productid,p.productnum,p.productname,p.cityname,p.departuretime,p.productprice,p.productdesc,p.productstatus from orders o,product p where o.productId = p.id
+    </select>
+
+</mapper>
