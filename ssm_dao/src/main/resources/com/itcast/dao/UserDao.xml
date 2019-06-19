@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itcast.dao.UserDao">
+
+    <resultMap id="findUser" type="userInfo">
+        <id property="id" column="id"/>
+        <result property="email" column="email"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="phoneNum" column="phoneNum"/>
+        <result property="status" column="status"/>
+        <collection property="roles" ofType="com.itcast.domain.Role">
+            <id property="id" column="roleId"/>
+            <result property="roleName" column="roleName"/>
+            <result property="roleDesc" column="roleDesc"/>
+        </collection>
+    </resultMap>
+
+    <select id="findByUsername" parameterType="String" resultMap="findUser">
+            select
+                   *
+            from
+                   (select
+                           u.*,
+                           r.rolename,r.roledesc,
+                           ur.*
+                    from
+                           users u,
+                           role r,
+                           users_role ur
+                    where
+                           u.id = ur.userid and
+                           r.id = ur.roleid)
+            where
+                    username = #{username}
+    </select>
+
+    <select id="findAll" resultType="userInfo">
+        select * from users
+    </select>
+
+    <insert id="save" parameterType="userInfo">
+        insert into users(email,username,password,phoneNum,status) values(#{email},#{username},#{password},#{phoneNum},#{status})
+    </insert>
+
+
+    <resultMap id="findByUserId" type="com.itcast.domain.UserInfo">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <association property="roles" column="id" javaType="java.util.List" select="com.itcast.dao.RolesDao.findByUserId"/>
+    </resultMap>
+    <select id="findById" parameterType="String" resultMap="findByUserId">
+        select * from users where id = #{id}
+    </select>
+
+</mapper>
