@@ -26,4 +26,61 @@
         select o.id,o.ordernum,o.ordertime,o.peoplecount,o.orderdesc,o.paytype,o.orderstatus,o.productid,p.productnum,p.productname,p.cityname,p.departuretime,p.productprice,p.productdesc,p.productstatus from orders o,product p where o.productId = p.id
     </select>
 
+    <resultMap id="findByOrdersId" type="orders">
+        <id property="id" column="id"/>
+        <result property="orderNum" column="orderNum"/>
+        <result property="orderTime" column="orderTime"/>
+        <result property="peopleCount" column="peopleCount"/>
+        <result property="orderDesc" column="orderDesc"/>
+        <result property="orderStatus" column="orderStatus"/>
+        <result property="payType" column="payType"/>
+        <association property="product" javaType="com.itcast.domain.Product">
+            <result property="productName" column="productName"/>
+            <result property="cityName" column="cityName"/>
+            <result property="departureTime" column="departureTime"/>
+            <result property="productPrice" column="productPrice"/>
+        </association>
+        <association property="member" javaType="com.itcast.domain.Member">
+            <result property="name" column="mn"/>
+            <result property="nickname" column="nickname"/>
+            <result property="phoneNum" column="mp"/>
+            <result property="email" column="email"/>
+        </association>
+        <collection property="travellers" ofType="com.itcast.domain.Traveller">
+            <result property="travellerType" column="travellerType"/>
+            <result property="name" column="tn"/>
+            <result property="sex" column="sex"/>
+            <result property="phoneNum" column="tp"/>
+            <result property="credentialsNum" column="credentialsNum"/>
+            <result property="credentialsType" column="credentialsType"/>
+        </collection>
+    </resultMap>
+
+    <select id="findById" resultMap="findByOrdersId">
+        select
+               optm.id,optm.ordernum,optm.ordertime,optm.peoplecount,optm.orderdesc,optm.paytype,optm.orderstatus,
+               optm.productname,optm.cityname,optm.departuretime,optm.productprice,
+               optm.travellertype,optm.tn,optm.sex,optm.tp,optm.credentialsnum,optm.credentialstype,
+               optm.nickname,optm.mn,optm.mp,optm.email
+        from
+               (select
+                       o.id,o.ordernum,o.ordertime,o.peoplecount,o.orderdesc,o.paytype,o.orderstatus,
+                       p.productname,p.cityname,p.departuretime,p.productprice,
+                       t.travellertype,t.name tn,t.sex,t.phonenum tp,t.credentialsnum,t.credentialstype,
+                       m.nickname,m.name mn,m.phonenum mp,m.email
+                from
+                       orders o,
+                       member m,
+                       product p,
+                       traveller t,
+                       order_traveller ot
+                where
+                       o.productid = p.id and
+                       o.memberid = m.id and
+                       o.id = ot.orderid and
+                       t.id = ot.travellerid) optm
+        where
+                optm.id = #{id}
+    </select>
+
 </mapper>

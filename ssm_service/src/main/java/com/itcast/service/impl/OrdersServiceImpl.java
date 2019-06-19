@@ -19,4 +19,8 @@ public class OrdersServiceImpl implements OrdersService {
         PageHelper.startPage(page,size);
         return ordersDao.findAll();
     }
+
+    public Orders findById(String id) throws Exception{
+        return ordersDao.findById(id);
+    }
 }
